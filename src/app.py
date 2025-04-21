@@ -1,12 +1,11 @@
-from flask import Flask
+from flask import Flask, render_template
+import os
 
 app = Flask(__name__)
 
-# Configuration settings
-app.config['DEBUG'] = True
-
-# Import routes
-from src.routes import *
+@app.route('/')
+def index():
+    return render_template('index.html')
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
