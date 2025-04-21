@@ -1,30 +1,88 @@
 # README.md
 
-# Flask Vercel App
+## Vercel Flask App
 
-This project is a Flask application designed to be deployed on Vercel. It serves as a template for building web applications using Flask and provides a basic structure to get started.
+A Flask application designed to be deployed on Vercel, providing a template for building web applications.
+
+# To run the project locally
+
+## Local Development Setup
+
+1. **Clone the repository:**
+
+2. **Set up Python Virtual Environment:**
+   ```powershell
+   python -m venv venv
+   .\venv\Scripts\activate
+   ```
+
+3. **Install Python Dependencies:**
+   ```powershell
+   pip install -r requirements.txt
+   ```
+
+4. **Install Node.js Dependencies:**
+   ```powershell
+   npm install
+   ```
+
+5. **Run the Development Server:**
+   ```powershell
+   npm run dev
+   ```
+   The application will be available at `http://localhost:5000`
+
+## Vercel Deployment
+
+1. **Install Vercel CLI (if not already installed):**
+   ```powershell
+   npm install -g vercel
+   ```
+
+2. **Login to Vercel:**
+   ```powershell
+   vercel login
+   ```
+
+3. **Deploy to Vercel:**
+   ```powershell
+   npm run deploy
+   ```
+
+## Available Scripts
+
+- `npm run dev` - Run Flask development server
+- `npm run flask` - Run Flask directly through Python
+- `npm run deploy` - Deploy to Vercel production
+- `npm start` - Run Vercel development environment
+
+## Requirements
+
+- Python 3.8 or higher
+- Node.js 14 or higher
+- npm or yarn
+- Vercel CLI
+
+## License
+
+This project is licensed under the MIT License.
 
 ## Project Structure
 
 ```
 Vercel-Rocksmith+
-├── api
-│   └── index.py          # API endpoint logic
-├── src
-│   ├── app.py            # Main entry point of the Flask application
-│   ├── routes
-│   │   └── __init__.py   # Route definitions
-│   ├── templates
-│   │   ├── base.html     # Base HTML template
-│   │   └── index.html    # Index page template
-│   └── static
-│       └── css
-│           └── style.css # CSS styles for the application
-├── requirements.txt       # Python dependencies
-├── vercel.json            # Vercel deployment configuration
-└── README.md              # Project documentation
+├── src/
+│   ├── app.py            # Main Flask application
+│   ├── templates/        # HTML templates
+│   │   └── index.html    # Main page template
+│   └── static/
+│       └── css/
+│           └── style.css # CSS styles
+├── requirements.txt      # Python dependencies
+├── package.json         # Node.js/Vercel configuration
+├── vercel.json          # Vercel deployment settings
+└── README.md           
 ```
-
 ## Setup Instructions
 
 1. Clone the repository:
