@@ -1,0 +1,15 @@
+{
+  "name": "vercel-rocksmith-plus",
+  "version": "1.0.0",
+  "description": "A web interfasce for retrieving Rocksmith+ song recommendations",
+  "main": "index.js",
+  "scripts": {
+    "start": "vercel dev",
+    "deploy": "vercel deploy --prod"
+  },
+  "author": "Michael Baggott",
+  "license": "MIT",
+  "devDependencies": {
+    "vercel": "^41.6.1"
+  }
+}
