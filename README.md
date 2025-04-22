@@ -91,8 +91,9 @@ Vercel-Rocksmith+
    cd flask-vercel-app
    ```
 
-2. Install the required dependencies:
+2. Activate the virtual environment and install the required dependencies:
    ```
+   .\venv\Scripts\activate
    pip install -r requirements.txt
    ```
 
@@ -116,3 +117,27 @@ Vercel-Rocksmith+
 ## License
 
 This project is licensed under the MIT License.
+
+## Database Indexation
+
+```
+-- Index songs table
+ALTER TABLE songs ADD INDEX idx_artist (artist);
+ALTER TABLE songs ADD INDEX idx_title (title);
+ALTER TABLE songs ADD INDEX idx_album (album);
+
+-- Index lookup tables with unique constraints
+ALTER TABLE genres ADD UNIQUE INDEX idx_genre_name (genre_name);
+ALTER TABLE arrangements ADD UNIQUE INDEX idx_arrangement_name (arrangement_name);
+ALTER TABLE regions ADD UNIQUE INDEX idx_region_code (region_code);
+
+-- Index junction tables for faster lookups and joins
+ALTER TABLE song_genres ADD INDEX idx_genre_id (genre_id);
+ALTER TABLE song_genres ADD INDEX idx_song_genre (song_id, genre_id);
+
+ALTER TABLE song_arrangements ADD INDEX idx_arrangement_id (arrangement_id);
+ALTER TABLE song_arrangements ADD INDEX idx_song_arrangement (song_id, arrangement_id);
+
+ALTER TABLE song_regions ADD INDEX idx_region_id (region_id);
+ALTER TABLE song_regions ADD INDEX idx_song_region (song_id, region_id);
+```
