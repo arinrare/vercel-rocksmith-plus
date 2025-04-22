@@ -7,7 +7,7 @@
     "start": "vercel dev",
     "deploy": "vercel deploy --prod",
     "flask": "python src/app.py",
-    "dev": "set FLASK_APP=src/app.py && python -m flask run --debug",
+    "dev": "venv\\Scripts\\activate && set FLASK_APP=src/app.py && python -m flask run --debug",
     "build": "pip install -r requirements.txt"
   },
   "author": "Michael Baggott",

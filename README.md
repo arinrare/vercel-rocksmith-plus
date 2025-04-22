@@ -13,7 +13,7 @@ A Flask application designed to be deployed on Vercel, providing a template for 
 2. **Set up Python Virtual Environment:**
    ```powershell
    python -m venv venv
-   .\venv\Scripts\activate
+   venv\Scripts\activate
    ```
 
 3. **Install Python Dependencies:**
