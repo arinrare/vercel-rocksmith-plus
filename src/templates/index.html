@@ -1,5 +1,19 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h2><p>Home</p></h2>
+<section class="home-content">
+    <h1>Home</h1>
+    
+    <div class="info-card">
+        <div class="snapshot-info">
+            <h2>Data Snapshot</h2>
+            <p>This website contains song information from Rocksmith+ as of April 22, 2025. It will not be updated beyond this date.</p>
+        </div>
+
+        <div class="prototype-info">
+            <h2>Prototype Notice</h2>
+            <p>This is a prototype website designed to test and explore various approaches to genre-based song recommendations, which may be integrated into <a href="https://grip.gimnechiske.org/rs+/page/1" target="_blank" rel="noopener noreferrer">Skippern's Rocksmith+ Database</a> site. Features and functionality may change as we refine our recommendation algorithms.</p>
+        </div>
+    </div>
+</section>
 {% endblock %}

@@ -1,5 +1,14 @@
 {% extends "base.html" %}
 
+{% block title %}Songs - Rocksmith+{% endblock %}
+
 {% block content %}
-    <h2><p>Songs</p></h2>
+    <section class="songs-section">
+        <h1>Songs Database</h1>
+        <div class="info-box">
+            <p class="reference-text">For a complete list of tracks, visit</p>
+            <p class="link-text"><a href="https://grip.gimnechiske.org/rs+/page/1" target="_blank" rel="noopener noreferrer">Skippern's Rocksmith+ Database</a></p>
+            <p class="attribution">Data sourced from Aun "Skippern" Johnsen's database</p>
+        </div>
+    </section>
 {% endblock %}

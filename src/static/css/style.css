@@ -12,6 +12,20 @@ body {
     background-color: var(--dark-bg);
     color: var(--text-color);
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.page-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    flex: 1;
 }
 
 main, header, footer {
@@ -91,6 +105,399 @@ main, header, footer {
     transition: all 0.3s linear;
 }
 
+/* Homepage styles */
+.home-content {
+    max-width: 1000px;
+    margin: 3rem auto;
+    padding: 0 2rem;
+    text-align: center;
+}
+
+.info-card {
+    background-color: var(--darker-bg);
+    border-radius: 12px;
+    padding: 2rem;
+    margin: 2rem 0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.snapshot-info, .prototype-info {
+    margin: 1.5rem 0;
+    padding: 1rem;
+}
+
+.info-card h2 {
+    color: var(--pastel-red);
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+}
+
+.info-card p {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    color: var(--text-color);
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+a {
+    color: var(--pastel-yellow);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: var(--pastel-red);
+}
+
+/* Footer specific link styles */
+footer a {
+    color: var(--pastel-yellow);
+    text-decoration: underline;
+}
+
+footer a:hover {
+    color: var(--pastel-red);
+    text-decoration: none;
+}
+
+/* Navigation specific link styles - override general styles */
+.main-nav a {
+    color: var(--text-color);
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.main-nav a:hover {
+    background-color: var(--pastel-red);
+    color: var(--darker-bg);
+}
+
+/* About page styles */
+.about-section {
+    max-width: 1000px;
+    margin: 3rem auto;
+    padding: 0 2rem;
+    text-align: center;
+}
+
+.about-section h1 {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    color: var(--pastel-yellow);
+}
+
+.attribution-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.attribution-section {
+    background: var(--darker-bg);
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.attribution-section h3 {
+    color: var(--pastel-red);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--pastel-yellow);
+}
+
+.attribution-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.attribution-list li {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.attribution-list span {
+    color: var(--pastel-yellow);
+    font-weight: bold;
+}
+
+@media (max-width: 768px) {
+    .attribution-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Recommended songs page styles */
+.recommendations-section {
+    max-width: 1000px;
+    margin: 3rem auto;
+    padding: 0 2rem;
+    text-align: center;
+}
+
+.recommendations-section .info-box {
+    background-color: var(--darker-bg);
+    border-radius: 12px;
+    padding: 2rem;
+    margin: 2rem auto;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    max-width: 800px;
+}
+
+.recommendations-section .info-box p {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    color: var(--text-color);
+}
+
+.input-options {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: var(--darker-bg);
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.option-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.option-btn {
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    background-color: var(--dark-bg);
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    opacity: 0.7;
+}
+
+.option-btn.active {
+    background-color: var(--pastel-red);
+    color: var(--darker-bg);
+    opacity: 1;
+}
+
+#genreForm {
+    margin-top: 2rem;
+}
+
+.input-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    transition: opacity 0.3s ease;
+}
+
+.input-form.inactive {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.band-input {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    width: 100%;
+}
+
+.genre-input {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    width: 100%;
+}
+
+.genre-selects {
+    display: flex;
+    gap: 0.5rem;
+    flex: 3;
+}
+
+.band-input input[type="text"],
+.band-input select,
+.genre-input select,
+.genre-input input[type="number"] {
+    flex: 1;  /* Takes up less space than the select */
+    min-width: 120px;  /* Ensures enough width for the placeholder */
+    padding: 0.8rem;
+    border: none;
+    border-radius: 4px;
+    background-color: var(--dark-bg);
+    color: var(--text-color);
+    min-width: 120px;
+    max-width: 150px;
+}
+
+.band-input input[type="text"] {
+    flex: 2;
+    min-width: 200px;
+}
+
+.genre-input select {
+    flex: 2;  /* Takes up more space than the number input */
+    min-width: 200px;
+}
+
+
+.genre-selects select {
+    flex: 1;
+    padding: 0.8rem;
+    border: none;
+    border-radius: 4px;
+    background-color: var(--dark-bg);
+    color: var(--text-color);
+    min-width: 120px;
+}
+
+
+.band-input input[type="text"] {
+    flex: 1 1 200px;
+}
+
+.add-btn, .submit-btn {
+    padding: 1rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.add-btn {
+    background-color: var(--pastel-yellow);
+    color: var(--darker-bg);
+}
+
+.submit-btn {
+    background-color: var(--pastel-red);
+    color: var(--darker-bg);
+    margin-top: 1rem;
+}
+
+.primary-genre {
+    border-left: 3px solid var(--pastel-red) !important;
+}
+
+.secondary-genre {
+    border-left: 3px solid var(--pastel-yellow) !important;
+}
+
+.tertiary-genre {
+    border-left: 3px solid rgba(255, 255, 255, 0.3) !important;
+}
+   
+.remove-btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    background-color: rgba(255, 0, 0, 0.2);
+    color: var(--text-color);
+    cursor: pointer;
+    align-self: center;
+}
+
+/* Footer styles */
+.main-footer {
+    background-color: var(--darker-bg);
+    padding: 1.5rem 0;
+    margin-top: auto;
+    box-shadow: 0 -2px 15px rgba(0, 0, 0, 0.3);
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    text-align: center;
+}
+
+.footer-content p {
+    margin: 0.5rem 0;
+    color: var(--text-color);
+    font-size: 0.9rem;
+}
+
+.footer-content a {
+    color: var(--pastel-yellow);
+    text-decoration: underline;
+}
+
+.footer-content a:hover {
+    color: var(--pastel-red);
+    text-decoration: none;
+}
+
+/* Songs page styles */
+.songs-section {
+    max-width: 1000px;
+    margin: 3rem auto;
+    padding: 0 2rem;
+    text-align: center;
+}
+
+.songs-section h1 {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    color: var(--pastel-yellow);
+}
+
+.info-box {
+    background-color: var(--darker-bg);
+    border-radius: 12px;
+    padding: 2rem;
+    margin: 2rem auto;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    max-width: 800px;
+}
+
+.reference-text {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+}
+
+.link-text {
+    font-size: 1.4rem;
+    margin-bottom: 1.5rem;
+}
+
+.link-text a {
+    color: var(--pastel-yellow);
+    text-decoration: underline;
+    transition: color 0.3s ease;
+}
+
+.link-text a:hover {
+    color: var(--pastel-red);
+}
+
+.attribution {
+    font-size: 1.1rem;
+    color: var(--text-color);
+    opacity: 0.8;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
 @media screen and (max-width: 768px) {
     .hamburger {
         display: flex;
@@ -123,5 +530,90 @@ main, header, footer {
     .main-nav a {
         display: block;
         padding: 1rem;
+    }
+
+    .home-content h1 {
+        font-size: 2rem;
+    }
+
+    .info-card h2 {
+        font-size: 1.5rem;
+    }
+
+    .info-card p {
+        font-size: 1.1rem;
+    }
+
+    .genre-input {
+        flex-direction: column;
+        width: 100%;
+        padding: 0.8rem;
+    }
+
+    .band-input {
+        flex-direction: column;
+        width: 100%;
+        padding: 0.8rem;
+    }
+
+     /* Remove any inherited flex properties */
+     .band-input > *,
+     .genre-selects > * {
+         flex: none !important;
+     }
+
+    .genre-input select, band-input select {
+        width: 100%;
+        min-width: 100%;
+        max-width: 100%;
+        padding: 0.8rem;
+        box-sizing: border-box;
+    }
+
+    .genre-input input[type="number"], .band-input input[type="text"] {
+        width: 100%;
+        min-width: 100%;
+        max-width: 100%;
+        padding: 0.8rem;
+        box-sizing: border-box;
+    }
+
+    .genre-selects {
+        flex-direction: column;
+        width: 100%;
+        max-height: calc(100vh - 300px); /* Leaves room for header and other elements */
+        overflow-y: auto;
+    }
+
+    .genre-selects select,
+    .genre-selects .primary-genre,
+    .genre-selects .secondary-genre,
+    .genre-selects .tertiary-genre {
+        width: 100%;
+        min-width: 100%;
+        max-width: 100%;
+        padding: 0.8rem;
+        box-sizing: border-box;
+        flex: none;
+    }
+    /* Improve scrolling experience */
+    .genre-selects::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .genre-selects::-webkit-scrollbar-track {
+        background: var(--dark-bg);
+        border-radius: 4px;
+    }
+
+    .genre-selects::-webkit-scrollbar-thumb {
+        background: var(--pastel-red);
+        border-radius: 4px;
+    }
+
+    /* Ensure inputs don't overflow their containers */
+    .band-input {
+        max-height: calc(100vh - 200px);
+        overflow-y: auto;
     }
 }
