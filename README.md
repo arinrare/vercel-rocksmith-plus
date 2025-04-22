@@ -10,58 +10,28 @@ A Flask application designed to be deployed on Vercel, providing a template for 
 
 1. **Clone the repository:**
 
-2. **Set up Python Virtual Environment:**
-   ```powershell
-   python -m venv venv
-   venv\Scripts\activate
+2. **Set up Python Virtual Environment and install dependencies:**
    ```
-
-3. **Install Python Dependencies:**
-   ```powershell
-   pip install -r requirements.txt
-   ```
-
-4. **Install Node.js Dependencies:**
-   ```powershell
-   npm install
+   npm run setup
    ```
 
 5. **Run the Development Server:**
-   ```powershell
+   ```
    npm run dev
    ```
    The application will be available at `http://localhost:5000`
 
-## Vercel Deployment
-
-1. **Install Vercel CLI (if not already installed):**
-   ```powershell
-   npm install -g vercel
-   ```
-
-2. **Login to Vercel:**
-   ```powershell
-   vercel login
-   ```
-
-3. **Deploy to Vercel:**
-   ```powershell
-   npm run deploy
-   ```
-
 ## Available Scripts
 
-- `npm run dev` - Run Flask development server
-- `npm run flask` - Run Flask directly through Python
-- `npm run deploy` - Deploy to Vercel production
-- `npm start` - Run Vercel development environment
+- `npm run setup` - Initial setup after cloning or installing new packages
+- `npm run dev` - Run the web app locally on port 5000
+- `npm clean` - Clean up the virtual environmentg if needed
 
 ## Requirements
 
 - Python 3.8 or higher
-- Node.js 14 or higher
+- Node.js
 - npm or yarn
-- Vercel CLI
 
 ## License
 

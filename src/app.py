@@ -2,6 +2,8 @@ from flask import Flask, render_template
 import os
 
 app = Flask(__name__)
+app.static_folder = 'static'
+app.template_folder = 'templates'
 
 @app.route('/')
 def index():
@@ -10,6 +12,7 @@ def index():
 @app.route('/songs')
 def songs():
     return render_template('songs.html')
+
 
 @app.route('/recommendations')
 def recommendations():
