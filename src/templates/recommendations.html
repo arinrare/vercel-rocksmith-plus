@@ -153,6 +153,11 @@
                     </div>
                 </div>
                 <button type="button" id="addGenre" class="add-btn">Add Another Genre</button>
+                <div class="results-control">
+                    <label for="numSongs"># Songs (20-500):</label>
+                    <input type="number" id="numSongs" min="20" max="500" step="20" value="20">
+                    <span class="help-text">Results will load 20 at a time</span>
+                </div>
                 <button type="submit" class="submit-btn">Get Recommendations</button>
             </form>
         </div>
@@ -172,16 +177,29 @@
                         <!-- Songs will be loaded here -->
                     </tbody>
                 </table>
+                <div class="pagination-controls">
+                    <button id="firstPage" class="page-btn" disabled>⟪ First</button>
+                    <button id="prevPage" class="page-btn" disabled>⟨ Previous</button>
+                    <span class="page-info">Page <span id="currentPageNum">1</span> of <span id="totalPages">1</span></span>
+                    <button id="nextPage" class="page-btn" disabled>Next ⟩</button>
+                    <button id="lastPage" class="page-btn" disabled>Last ⟫</button>
+                </div>
             </div>
         </div>
     </section>
     <script>
+        let currentPage = 1;
+        let totalSongs = 0;
+        let isLoading = false;
+        let pageSize = 20;
+    
         // Form submission handlers
         document.getElementById('bandForm').addEventListener('submit', handleFormSubmit);
         document.getElementById('genreForm').addEventListener('submit', handleFormSubmit);
     
         function handleFormSubmit(e) {
             e.preventDefault();
+            currentPage = 1;
     
             // Check if any genre has a weight
             let hasWeight = false;
@@ -197,30 +215,32 @@
                 }
             }
     
-            // Clear existing songs
-            const grid = document.getElementById('songs-grid');
-            grid.innerHTML = '<div class="loading">Loading recommendations...</div>';
-    
             // Get form data
-            const formData = new FormData(e.target);
+            const data = collectFormData(e.target);
+            data.page = currentPage;
+            data.perPage = pageSize;
+    
+            fetchSongs(data, true);
+        }
+    
+        function collectFormData(form) {
             const data = {
-                formType: e.target.id,
-                genres: []
+                formType: form.id,
+                genres: [],
+                totalRequested: parseInt(document.getElementById('numSongs').value || 500)
             };
     
-            if (e.target.id === 'genreForm') {
-                // Process genre weights
-                const genreInputs = e.target.querySelectorAll('.genre-input');
+            if (form.id === 'genreForm') {
+                const genreInputs = form.querySelectorAll('.genre-input');
                 genreInputs.forEach(input => {
                     const genre = input.querySelector('select').value;
                     const weight = input.querySelector('input[type="number"]').value;
                     if (genre && weight > 0) {
-                        data.genres.push({ genre, weight });
+                        data.genres.push({ genre, weight: parseInt(weight) });
                     }
                 });
             } else {
-                // Process band form
-                const bandInputs = e.target.querySelectorAll('.band-input');
+                const bandInputs = form.querySelectorAll('.band-input');
                 bandInputs.forEach(input => {
                     const band = input.querySelector('input[type="text"]').value;
                     const primary = input.querySelector('.primary-genre').value;
@@ -234,8 +254,19 @@
                     }
                 });
             }
+            return data;
+        }
     
-            // Fetch recommendations
+        function fetchSongs(data, isNewSearch = false) {
+            if (isLoading) return;
+            isLoading = true;
+    
+            const grid = document.getElementById('songs-grid');
+            
+            if (isNewSearch) {
+                grid.innerHTML = '<tr><td colspan="4" class="loading">Loading recommendations...</td></tr>';
+            }
+    
             fetch('/api/songs_weighted', {
                 method: 'POST',
                 headers: {
@@ -244,13 +275,13 @@
                 body: JSON.stringify(data)
             })
             .then(response => response.json())
-            .then(songs => {
-                grid.innerHTML = ''; // Clear loading message
-                if (songs.length === 0) {
-                    grid.innerHTML = '<div class="no-results">No recommendations found</div>';
-                    return;
+            .then(result => {
+                if (result.error) {
+                    throw new Error(result.error);
                 }
-                songs.forEach(song => {
+
+                grid.innerHTML = '';
+                result.songs.forEach(song => {
                     grid.innerHTML += `
                         <tr>
                             <td>${song.title}</td>
@@ -260,11 +291,82 @@
                         </tr>
                     `;
                 });
+    
+                totalSongs = result.total;
+                currentPage = parseInt(result.currentPage) || currentPage; // Make sure we get a number
+                
+                // Debug info
+                console.log('Server response:', {
+                    total: result.total,
+                    currentPage: result.currentPage,
+                    totalPages: Math.ceil(result.total / pageSize)
+                });
+                
+                updatePagination();
+                isLoading = false;
             })
             .catch(error => {
                 console.error('Error:', error);
-                grid.innerHTML = '<div class="error">Error loading recommendations</div>';
+                grid.innerHTML = '<tr><td colspan="4" class="error">Error loading recommendations</td></tr>';
+                isLoading = false;
             });
         }
+    
+        function updatePagination() {
+            const totalPages = Math.ceil(totalSongs / pageSize);
+            document.getElementById('currentPageNum').textContent = currentPage;
+            document.getElementById('totalPages').textContent = totalPages;
+            
+            // Update button states
+            document.getElementById('firstPage').disabled = currentPage === 1;
+            document.getElementById('prevPage').disabled = currentPage === 1;
+            document.getElementById('nextPage').disabled = currentPage >= totalPages;
+            document.getElementById('lastPage').disabled = currentPage >= totalPages;
+
+            console.log(`Current page: ${currentPage}, Total pages: ${totalPages}`); // Debug info
+        }
+    
+        // Navigation event listeners
+        document.getElementById('firstPage').addEventListener('click', () => {
+            if (currentPage !== 1) {
+                const form = document.querySelector('form:not([hidden])');
+                const data = collectFormData(form);
+                data.page = 1;
+                data.perPage = pageSize;
+                fetchSongs(data);
+            }
+        });
+    
+        document.getElementById('prevPage').addEventListener('click', () => {
+            if (currentPage > 1) {
+                const form = document.querySelector('form:not([hidden])');
+                const data = collectFormData(form);
+                data.page = currentPage - 1;
+                data.perPage = pageSize;
+                fetchSongs(data);
+            }
+        });
+    
+        document.getElementById('nextPage').addEventListener('click', () => {
+            const totalPages = Math.ceil(totalSongs / pageSize);
+            if (currentPage < totalPages) {
+                const form = document.querySelector('form:not([hidden])');
+                const data = collectFormData(form);
+                data.page = currentPage + 1;
+                data.perPage = pageSize;
+                fetchSongs(data);
+            }
+        });
+    
+        document.getElementById('lastPage').addEventListener('click', () => {
+            const totalPages = Math.ceil(totalSongs / pageSize);
+            if (currentPage !== totalPages) {
+                const form = document.querySelector('form:not([hidden])');
+                const data = collectFormData(form);
+                data.page = totalPages;
+                data.perPage = pageSize;
+                fetchSongs(data);
+            }
+        });
     </script>
 {% endblock %}

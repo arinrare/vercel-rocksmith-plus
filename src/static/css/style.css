@@ -455,6 +455,69 @@ footer a:hover {
     background-color: rgba(255, 255, 255, 0.1);
 }
 
+.results-control {
+    margin: 20px 0;
+    padding: 15px;
+    background: var(--dark-bg);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.results-control input[type="number"] {
+    width: 100px;
+    padding: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background: var(--darker-bg);
+    color: var(--text-color);
+}
+
+.help-text {
+    font-size: 0.9em;
+    color: var(--text-muted);
+}
+
+.loading {
+    text-align: center;
+    padding: 20px;
+    color: var(--text-muted);
+}
+
+.pagination-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin: 1rem 0;
+    padding: 1rem;
+}
+
+.page-btn {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--border-color);
+    background: var(--dark-bg);
+    color: var(--text-color);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.page-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.page-btn:not(:disabled):hover {
+    background: var(--highlight-bg);
+}
+
+.page-info {
+    color: var(--text-color);
+    font-size: 0.9rem;
+}
+
 /* Loading and error states */
 .loading, .error, .no-results {
     padding: 20px;

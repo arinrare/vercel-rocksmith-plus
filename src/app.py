@@ -1,11 +1,16 @@
 from flask import Flask, render_template
 from .api.get_songs_by_weighted import api_songs_weighted
 import logging
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
 app.static_folder = 'static'
 app.template_folder = 'templates'
 app.debug = True
+app.secret_key=os.getenv('SECRET_KEY')
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
