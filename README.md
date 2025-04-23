@@ -1,8 +1,8 @@
 # README.md
 
-## Vercel Flask App
+## Python Flask App
 
-A Flask application designed to be deployed on Vercel, providing a template for building web applications.
+A Flask application designed to be deployed on Cpanel, providing a template for building web applications.
 
 # To run the project locally
 
@@ -11,6 +11,7 @@ A Flask application designed to be deployed on Vercel, providing a template for 
 1. **Clone the repository:**
 
 2. **Set up Python Virtual Environment and install dependencies:**
+- Needs to be done at a CLI propmt with admin prviliges
    ```
    npm run setup
    ```
@@ -21,7 +22,47 @@ A Flask application designed to be deployed on Vercel, providing a template for 
    ```
    The application will be available at `http://localhost:5000`
 
-## Available Scripts
+## Deploy to CPanel
+
+1. Install a python app in the root folder rocksmith-plus, and set the URL to [domain-name]rocksmith-plus
+
+2. Edit the passenger_wsgi.py file that will be automatically placed in the rocksmith-plus folder
+```
+import os
+import sys
+
+# Add application directory to path
+sys.path.insert(0, os.path.dirname(__file__))
+
+# Import Flask app
+from src.app import app as application
+```
+
+3. Edit the .htaccess that will be placed in the public_html/rocksmith-plus folder
+- Add the following two lines
+```
+RewriteEngine On 
+RewriteRule ^http://%{HTTP_HOST}%{REQUEST_URI} [END,NE]
+```
+
+4. - Log in via ssh and execute ```source /home/michaelb/virtualenv/rocksmith-plus/3.9/bin/activate && cd /home/michaelb/rocksmith-plus```
+   - Execute ```pip install -r requirements.txt```
+
+4. Copy the src/static folder to the public_html/rocksmith-plus folder
+
+5. Copy the src/api, src/template, src/utility folders, and the src/app.py file to the rocksmith-plus/src on the host
+
+6. Copy the requirements.txt folder to the rocksmith-plus folder (root project directory)
+
+7, Add the envioronment variables in the CPANEL python app
+
+8. Restart the python app
+
+### Notes
+
+- the python logs can be dound in rocksmith-plus/stederr.log 
+
+## Available Local Scripts
 
 - `npm run setup` - Initial setup after cloning or installing new packages
 - `npm run dev` - Run the web app locally on port 5000
@@ -53,36 +94,11 @@ Vercel-Rocksmith+
 ├── vercel.json          # Vercel deployment settings
 └── README.md           
 ```
-## Setup Instructions
-
-1. Clone the repository:
-   ```
-   git clone <repository-url>
-   cd flask-vercel-app
-   ```
-
-2. Activate the virtual environment and install the required dependencies:
-   ```
-   .\venv\Scripts\activate
-   pip install -r requirements.txt
-   ```
-
-3. Run the application locally:
-   ```
-   python src/app.py
-   ```
-
-4. Deploy to Vercel:
-   - Ensure you have the Vercel CLI installed.
-   - Run the following command to deploy:
-   ```
-   vercel
-   ```
 
 ## Usage
 
 - Access the application in your browser at `http://localhost:5000` when running locally.
-- Follow the Vercel deployment instructions to access your application online.
+- Follow the Cpanel deployment instructions to access your application online.
 
 ## License
 
