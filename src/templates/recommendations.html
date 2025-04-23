@@ -192,6 +192,7 @@
         let totalSongs = 0;
         let isLoading = false;
         let pageSize = 20;
+        const API_PREFIX = window.location.hostname === '127.0.0.1' ? '' : '/rocksmith-plus';
     
         // Form submission handlers
         document.getElementById('bandForm').addEventListener('submit', handleFormSubmit);
@@ -266,8 +267,10 @@
             if (isNewSearch) {
                 grid.innerHTML = '<tr><td colspan="4" class="loading">Loading recommendations...</td></tr>';
             }
+
+            console.log('API PREFIX:', API_PREFIX); // Debug info
     
-            fetch('/api/songs_weighted', {
+            fetch(`${API_PREFIX}/api/songs_weighted`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
