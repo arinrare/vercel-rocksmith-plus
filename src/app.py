@@ -1,9 +1,15 @@
 from flask import Flask, render_template
-import os
+from .api.get_songs_by_weighted import api_songs_weighted
+import logging
 
 app = Flask(__name__)
 app.static_folder = 'static'
 app.template_folder = 'templates'
+app.debug = True
+
+# Configure logging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 @app.route('/')
 def index():
@@ -21,6 +27,9 @@ def recommendations():
 @app.route('/about')
 def about():
     return render_template('about.html')
+
+# Register the API blueprint
+app.register_blueprint(api_songs_weighted)
 
 if __name__ == '__main__':
     app.run(debug=True)

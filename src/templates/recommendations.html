@@ -156,5 +156,115 @@
                 <button type="submit" class="submit-btn">Get Recommendations</button>
             </form>
         </div>
+        <div class="recommendations-container">
+            <h2>Song Recommendations</h2>
+            <div class="table-wrapper">
+                <table id="songs-table">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Artist</th>
+                            <th>Genres</th>
+                            <th>Arrangements</th>
+                        </tr>
+                    </thead>
+                    <tbody id="songs-grid">
+                        <!-- Songs will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </section>
+    <script>
+        // Form submission handlers
+        document.getElementById('bandForm').addEventListener('submit', handleFormSubmit);
+        document.getElementById('genreForm').addEventListener('submit', handleFormSubmit);
+    
+        function handleFormSubmit(e) {
+            e.preventDefault();
+    
+            // Check if any genre has a weight
+            let hasWeight = false;
+            if (e.target.id === 'genreForm') {
+                const weights = e.target.querySelectorAll('input[type="number"]');
+                weights.forEach(weight => {
+                    if (weight.value > 0) hasWeight = true;
+                });
+                
+                if (!hasWeight) {
+                    alert('Please add at least one genre with a weight greater than 0');
+                    return;
+                }
+            }
+    
+            // Clear existing songs
+            const grid = document.getElementById('songs-grid');
+            grid.innerHTML = '<div class="loading">Loading recommendations...</div>';
+    
+            // Get form data
+            const formData = new FormData(e.target);
+            const data = {
+                formType: e.target.id,
+                genres: []
+            };
+    
+            if (e.target.id === 'genreForm') {
+                // Process genre weights
+                const genreInputs = e.target.querySelectorAll('.genre-input');
+                genreInputs.forEach(input => {
+                    const genre = input.querySelector('select').value;
+                    const weight = input.querySelector('input[type="number"]').value;
+                    if (genre && weight > 0) {
+                        data.genres.push({ genre, weight });
+                    }
+                });
+            } else {
+                // Process band form
+                const bandInputs = e.target.querySelectorAll('.band-input');
+                bandInputs.forEach(input => {
+                    const band = input.querySelector('input[type="text"]').value;
+                    const primary = input.querySelector('.primary-genre').value;
+                    const secondary = input.querySelector('.secondary-genre').value;
+                    const tertiary = input.querySelector('.tertiary-genre').value;
+                    if (band && primary) {
+                        data.genres.push({
+                            band,
+                            genres: [primary, secondary, tertiary].filter(Boolean)
+                        });
+                    }
+                });
+            }
+    
+            // Fetch recommendations
+            fetch('/api/songs_weighted', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(songs => {
+                grid.innerHTML = ''; // Clear loading message
+                if (songs.length === 0) {
+                    grid.innerHTML = '<div class="no-results">No recommendations found</div>';
+                    return;
+                }
+                songs.forEach(song => {
+                    grid.innerHTML += `
+                        <tr>
+                            <td>${song.title}</td>
+                            <td>${song.artist}</td>
+                            <td>${song.genres || '-'}</td>
+                            <td>${song.arrangements || '-'}</td>
+                        </tr>
+                    `;
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                grid.innerHTML = '<div class="error">Error loading recommendations</div>';
+            });
+        }
+    </script>
 {% endblock %}

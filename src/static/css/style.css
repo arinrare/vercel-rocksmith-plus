@@ -415,6 +415,75 @@ footer a:hover {
     align-self: center;
 }
 
+/* Recommended songs styles */
+.table-wrapper {
+    background: var(--darker-bg);
+    max-height: 600px;
+    overflow-y: auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
+    margin: 20px 0;
+}
+
+#songs-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--darker-bg);
+    color: var(--text-color);
+}
+
+#songs-table thead {
+    position: sticky;
+    top: 0;
+    background: var(--dark-bg);
+    color: var(--text-color);
+}
+
+#songs-table th,
+#songs-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-color);
+}
+
+#songs-table tbody tr:nth-child(even) {
+    background-color: var(--dark-bg);
+}
+
+#songs-table tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Loading and error states */
+.loading, .error, .no-results {
+    padding: 20px;
+    text-align: center;
+    color: #666;
+}
+
+.error {
+    color: #d32f2f;
+}
+
+/* Scrollbar styling */
+.table-wrapper::-webkit-scrollbar {
+    width: 8px;
+}
+
+.table-wrapper::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
 /* Footer styles */
 .main-footer {
     background-color: var(--darker-bg);
