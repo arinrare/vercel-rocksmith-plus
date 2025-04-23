@@ -12,7 +12,8 @@ def get_db_connection():
             database=os.getenv('DATABASE_NAME'),
             user=os.getenv('DATABASE_USERNAME'),
             password=os.getenv('DATABASE_PASSWORD'),
-            port=os.getenv('DATABASE_PORT')
+            port=os.getenv('DATABASE_PORT'),
+            charset='utf8mb4'
         )
         return connection
     except Error as e:
