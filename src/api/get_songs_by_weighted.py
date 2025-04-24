@@ -61,32 +61,47 @@ def get_songs():
 
             # Create and populate temp table
             temp_table_query = f"""
-                CREATE TEMPORARY TABLE {session['search_table']} (
-                    id INT PRIMARY KEY,
-                    title VARCHAR(255),
-                    artist VARCHAR(255),
-                    genres TEXT,
-                    arrangements TEXT,
-                    genre_score FLOAT
-                )
-                SELECT s.id, s.title, s.artist,
-                    GROUP_CONCAT(DISTINCT g.genre_name) as genres,
-                    GROUP_CONCAT(DISTINCT a.arrangement_name) as arrangements,
-                    SUM(CASE 
-                        {" ".join(genre_cases)}
-                        ELSE 0 
-                    END) as genre_score
-                FROM songs s
-                LEFT JOIN song_genres sg ON s.id = sg.song_id
-                LEFT JOIN genres g ON sg.genre_id = g.id
-                LEFT JOIN song_arrangements sa ON s.id = sa.song_id
-                LEFT JOIN arrangements a ON sa.arrangement_id = a.id
-                WHERE g.genre_name IN ({','.join(['%s'] * len(genre_values))})
-                GROUP BY s.id
-                HAVING genre_score > 0
-                ORDER BY genre_score DESC
-                LIMIT 500
-            """
+    CREATE TEMPORARY TABLE {session['search_table']} (
+        id INT PRIMARY KEY,
+        title VARCHAR(255),
+        artist VARCHAR(255),
+        genres TEXT,
+        arrangements TEXT,
+        genre_score FLOAT
+    )
+    SELECT s.id, s.title, s.artist,
+        GROUP_CONCAT(DISTINCT g.genre_name) as genres,
+        GROUP_CONCAT(DISTINCT 
+            CASE a.arrangement_name
+                WHEN 'ai_bass' THEN 'iconAIBass.png'
+                WHEN 'ai_chord' THEN 'iconAIChord.png'
+                WHEN 'bass' THEN 'iconBass.png'
+                WHEN 'lead' THEN 'iconLead.png'
+                WHEN 'rhythm' THEN 'iconRhythm.png'
+                WHEN 'keyboard' THEN 'iconKeyboard.png'
+                WHEN 'simple_keyboard' THEN 'iconSimpleKeyboard.png'
+                WHEN 'alt_lead' THEN 'iconALTLead.png'
+                WHEN 'alt_bass' THEN 'iconALTBass.png'
+                WHEN 'simple_guitar' THEN 'iconSimpleGuitar.png'
+                WHEN 'alt_rhythm' THEN 'iconALTRhythm.png'
+                ELSE NULL
+            END
+        ) as arrangements,
+        SUM(CASE 
+            {" ".join(genre_cases)}
+            ELSE 0 
+        END) as genre_score
+    FROM songs s
+    LEFT JOIN song_genres sg ON s.id = sg.song_id
+    LEFT JOIN genres g ON sg.genre_id = g.id
+    LEFT JOIN song_arrangements sa ON s.id = sa.song_id
+    LEFT JOIN arrangements a ON sa.arrangement_id = a.id
+    WHERE g.genre_name IN ({','.join(['%s'] * len(genre_values))})
+    GROUP BY s.id
+    HAVING genre_score > 0
+    ORDER BY genre_score DESC
+    LIMIT 500
+"""
             cursor.execute(temp_table_query, genre_values + genre_values)
             
             # Get total count

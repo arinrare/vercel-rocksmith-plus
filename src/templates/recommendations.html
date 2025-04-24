@@ -285,12 +285,20 @@
 
                 grid.innerHTML = '';
                 result.songs.forEach(song => {
+                    const arrangementIcons = song.arrangements ? 
+                        song.arrangements.split(',')
+                            .map(filename => `<img src="${API_PREFIX}/static/img/${filename.trim()}" 
+                                                alt="Arrangement Icon" 
+                                                class="arrangement-icon" />`)
+                            .join('') 
+                        : '-';
+                    
                     grid.innerHTML += `
                         <tr>
                             <td>${song.title}</td>
                             <td>${song.artist}</td>
                             <td>${song.genres || '-'}</td>
-                            <td>${song.arrangements || '-'}</td>
+                           <td class="arrangement-cell">${arrangementIcons}</td>
                         </tr>
                     `;
                 });

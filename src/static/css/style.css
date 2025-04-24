@@ -455,6 +455,19 @@ footer a:hover {
     background-color: rgba(255, 255, 255, 0.1);
 }
 
+.arrangement-cell {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.arrangement-icon {
+    width: 72px;
+    height: 72px;
+    object-fit: contain;
+}
+
 .results-control {
     margin: 20px 0;
     padding: 15px;

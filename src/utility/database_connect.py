@@ -11,7 +11,7 @@ def get_db_connection():
             host=os.getenv('DATABASE_URL'),
             database=os.getenv('DATABASE_NAME'),
             user=os.getenv('DATABASE_USERNAME'),
-            password=os.getenv('DATABASE_PASSWORD'),
+            password='ccg5!45x$Rt5z!7y',
             port=os.getenv('DATABASE_PORT'),
             charset='utf8mb4'
         )
