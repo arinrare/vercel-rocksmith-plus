@@ -1,5 +1,6 @@
 from flask import Flask, render_template
 from .api.get_songs_by_weighted import api_songs_weighted
+from .api.get_songs_by_band_selection import api_songs_bands
 import logging
 import os
 from dotenv import load_dotenv
@@ -35,6 +36,7 @@ def about():
 
 # Register the API blueprint
 app.register_blueprint(api_songs_weighted)
+app.register_blueprint(api_songs_bands)
 
 if __name__ == '__main__':
     app.run(debug=True)

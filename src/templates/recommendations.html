@@ -109,6 +109,11 @@
                     </div>
                 </div>
                 <button type="button" id="addBand" class="add-btn">Add Another Band</button>
+                <div class="results-control">
+                    <label for="numSongs"># Songs (20-500):</label>
+                    <input type="number" id="bandNumSongs" min="20" max="500" step="20" value="20">
+                    <span class="help-text">Results will load 20 at a time</span>
+                </div>
                 <button type="submit" class="submit-btn">Get Recommendations</button>
             </form>
 
@@ -155,7 +160,7 @@
                 <button type="button" id="addGenre" class="add-btn">Add Another Genre</button>
                 <div class="results-control">
                     <label for="numSongs"># Songs (20-500):</label>
-                    <input type="number" id="numSongs" min="20" max="500" step="20" value="20">
+                    <input type="number" id="genreNumSongs" min="20" max="500" step="20" value="20">
                     <span class="help-text">Results will load 20 at a time</span>
                 </div>
                 <button type="submit" class="submit-btn">Get Recommendations</button>
@@ -228,33 +233,58 @@
             const data = {
                 formType: form.id,
                 genres: [],
-                totalRequested: parseInt(document.getElementById('numSongs').value || 500)
+                totalRequested: parseInt(
+                    form.id === 'bandForm' 
+                        ? document.getElementById('bandNumSongs').value 
+                        : document.getElementById('genreNumSongs').value
+                ) || 500
             };
     
             if (form.id === 'genreForm') {
                 const genreInputs = form.querySelectorAll('.genre-input');
                 genreInputs.forEach(input => {
-                    const genre = input.querySelector('select').value;
-                    const weight = input.querySelector('input[type="number"]').value;
-                    if (genre && weight > 0) {
-                        data.genres.push({ genre, weight: parseInt(weight) });
+                    // Skip if the input container or its elements are disabled
+                    if (input.hasAttribute('disabled')) return;
+                    
+                    const select = input.querySelector('select:not(:disabled)');
+                    const weight = input.querySelector('input[type="number"]:not(:disabled)');
+                    
+                    if (select && weight && select.value && weight.value > 0) {
+                        data.genres.push({ 
+                            genre: select.value, 
+                            weight: parseInt(weight.value) 
+                        });
                     }
                 });
             } else {
                 const bandInputs = form.querySelectorAll('.band-input');
                 bandInputs.forEach(input => {
-                    const band = input.querySelector('input[type="text"]').value;
-                    const primary = input.querySelector('.primary-genre').value;
-                    const secondary = input.querySelector('.secondary-genre').value;
-                    const tertiary = input.querySelector('.tertiary-genre').value;
-                    if (band && primary) {
+                    // Skip if the input container or its elements are disabled
+                    if (input.hasAttribute('disabled')) return;
+                    
+                    const bandName = input.querySelector('input[type="text"]:not(:disabled)');
+                    const primary = input.querySelector('.primary-genre:not(:disabled)');
+                    const secondary = input.querySelector('.secondary-genre:not(:disabled)');
+                    const tertiary = input.querySelector('.tertiary-genre:not(:disabled)');
+                    
+                    if (bandName && primary && bandName.value && primary.value) {
                         data.genres.push({
-                            band,
-                            genres: [primary, secondary, tertiary].filter(Boolean)
+                            band: bandName.value,
+                            genres: [
+                                primary.value,
+                                secondary?.value,
+                                tertiary?.value
+                            ].filter(Boolean)
                         });
                     }
                 });
             }
+
+            // Validate we have at least one valid entry
+            if (data.genres.length === 0) {
+                throw new Error('No valid enabled inputs found');
+            }
+
             return data;
         }
     
@@ -263,6 +293,8 @@
             isLoading = true;
     
             const grid = document.getElementById('songs-grid');
+
+            const endpoint = data.formType === 'bandForm' ? '/api/songs_bands' : '/api/songs_weighted';
             
             if (isNewSearch) {
                 grid.innerHTML = '<tr><td colspan="4" class="loading">Loading recommendations...</td></tr>';
@@ -270,7 +302,7 @@
 
             console.log('API PREFIX:', API_PREFIX); // Debug info
     
-            fetch(`${API_PREFIX}/api/songs_weighted`, {
+            fetch(`${API_PREFIX}${endpoint}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

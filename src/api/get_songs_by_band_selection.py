@@ -3,9 +3,10 @@ from ..utility.database_connect import get_db_connection
 import logging
 from datetime import timedelta, datetime
 import uuid
+import json
 
 logger = logging.getLogger(__name__)
-api_songs_weighted = Blueprint('songs_weighted_api', __name__)
+api_songs_bands = Blueprint('songs_bands_api', __name__)
 
 def json_serializable(obj):
     """Convert datetime/timedelta objects to strings for JSON serialization"""
@@ -13,8 +14,8 @@ def json_serializable(obj):
         return str(obj)
     return obj
 
-@api_songs_weighted.route('/api/songs_weighted', methods=['POST'])
-def get_songs():
+@api_songs_bands.route('/api/songs_bands', methods=['POST'])
+def get_songs_by_bands():
     connection = get_db_connection()
     if connection is None:
         logger.error("Database connection failed")
@@ -22,15 +23,17 @@ def get_songs():
 
     data = request.get_json()
     if not data or 'genres' not in data:
-        return jsonify({"error": "No genres provided"}), 400
+        return jsonify({"error": "No band data provided"}), 400
 
-    genres = data.get('genres', [])
+    bands = data.get('genres', [])
     page = int(data.get('page', 1))
     per_page = 20  # Fixed page size
+
     total_requested = min(int(data.get('totalRequested', 500)), 500)
+
+    if not bands:
+        return jsonify({"error": "No bands provided"}), 400
     
-    if not genres:
-        return jsonify({"error": "Empty genres list"}), 400
 
     try:
         cursor = connection.cursor(dictionary=True)
@@ -46,21 +49,21 @@ def get_songs():
         else:
             table_exists = False
 
-        # Create temp table for new search or if previous table is gone
         if not table_exists:
-            # Generate unique table name
-            session['search_table'] = f"weighted_results_{uuid.uuid4().hex[:8]}"
+            session['search_table'] = f"band_results_{uuid.uuid4().hex[:8]}"
             
-            # Build CASE statement for genre weights
-            genre_cases = []
-            genre_values = []
-            for genre_data in genres:
-                genre = genre_data['genre']
-                weight = float(genre_data['weight'])
-                genre_cases.append(f"WHEN g.genre_name = %s THEN {weight}")
-                genre_values.append(genre)
+            # Process bands data in Python instead of JSON_TABLE
+            genre_list = []
+            for band in bands:
+                if 'genres' in band:
+                    genre_list.extend([g.lower() for g in band['genres'] if g])
+            
+            # Remove duplicates while preserving order
+            unique_genres = list(dict.fromkeys(genre_list))
+            
+            # Create placeholders for IN clause
+            genre_placeholders = ','.join(['%s'] * len(unique_genres))
 
-            # Create and populate temp table
             temp_table_query = f"""
                 CREATE TEMPORARY TABLE {session['search_table']} (
                     id INT PRIMARY KEY,
@@ -68,9 +71,12 @@ def get_songs():
                     artist VARCHAR(255),
                     genres TEXT,
                     arrangements TEXT,
-                    genre_score FLOAT
+                    match_score FLOAT
                 )
-                SELECT s.id, s.title, s.artist,
+                SELECT 
+                    s.id,
+                    s.title,
+                    s.artist,
                     GROUP_CONCAT(DISTINCT g.genre_name) as genres,
                     GROUP_CONCAT(DISTINCT 
                         CASE a.arrangement_name
@@ -88,26 +94,28 @@ def get_songs():
                             ELSE NULL
                         END
                     ) as arrangements,
-                    SUM(CASE 
-                        {" ".join(genre_cases)}
-                        ELSE 0 
-                    END) as genre_score
+                    COUNT(DISTINCT CASE 
+                        WHEN LOWER(g.genre_name) IN ({genre_placeholders})
+                        THEN g.genre_name
+                        ELSE NULL
+                    END) as match_score
                 FROM songs s
                 LEFT JOIN song_genres sg ON s.id = sg.song_id
                 LEFT JOIN genres g ON sg.genre_id = g.id
                 LEFT JOIN song_arrangements sa ON s.id = sa.song_id
                 LEFT JOIN arrangements a ON sa.arrangement_id = a.id
-                WHERE g.genre_name IN ({','.join(['%s'] * len(genre_values))})
                 GROUP BY s.id
-                HAVING genre_score > 0
-                ORDER BY genre_score DESC
+                HAVING match_score > 0
+                ORDER BY match_score DESC, s.title
                 LIMIT %s
             """
-            cursor.execute(temp_table_query, genre_values + genre_values + [total_requested])
+            # Execute with flattened genre list
+            cursor.execute(temp_table_query, unique_genres + [total_requested])
             
-            # Get total count
+            # Get total count after creating table
             cursor.execute(f"SELECT COUNT(*) as total FROM {session['search_table']}")
-            session['total_results'] = cursor.fetchone()['total']
+            result = cursor.fetchone()
+            session['total_results'] = result['total'] if result else 0
 
         # Calculate pagination
         offset = (page - 1) * per_page
@@ -115,7 +123,7 @@ def get_songs():
         # Fetch page from temp table
         cursor.execute(f"""
             SELECT * FROM {session['search_table']}
-            ORDER BY genre_score DESC
+            ORDER BY match_score DESC
             LIMIT %s OFFSET %s
         """, [per_page, offset])
         
